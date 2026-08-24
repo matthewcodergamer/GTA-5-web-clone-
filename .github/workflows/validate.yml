@@ -9,19 +9,28 @@ permissions:
   contents: read
 
 jobs:
-  syntax:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check JavaScript syntax
-        run: node --check src/main.js
-      - name: Verify required web files
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check bootstrap syntax
+        run: node --check src/bootstrap-v2.js
+      - name: Check compressed game runtime
+        run: |
+          base64 -d src/game-v2.js.gz.b64 | gzip -dc > /tmp/game-v2.js
+          node --check /tmp/game-v2.js
+      - name: Verify required web files and guards
         run: |
           test -f index.html
-          test -f styles.css
-          test -f src/main.js
+          test -f styles-v2.css.gz.b64
+          test -f src/bootstrap-v2.js
+          test -f src/game-v2.js.gz.b64
           grep -q "three@0.185.1" index.html
-          if grep -R -F "skeletonHelper?.update" -n src index.html 2>/dev/null; then
-            echo "Invalid SkeletonHelper optional update call found"
+          grep -q "bootstrap-v2.js" index.html
+          if grep -R -E "skeletonHelper\??\.update\(|skeleton\.update\(" -n src index.html 2>/dev/null; then
+            echo "Invalid SkeletonHelper update call found"
             exit 1
           fi
