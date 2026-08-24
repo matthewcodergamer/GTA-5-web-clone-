@@ -6,8 +6,11 @@
   <meta name="theme-color" content="#dfe6df" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Project V</title>
-  <link rel="stylesheet" href="./styles.css?v=5" />
+  <link rel="stylesheet" href="./styles.css?v=6" />
   <script type="importmap">
   {
     "imports": {
@@ -69,20 +72,20 @@
       <div class="status-row"><span id="modelStatus" class="status-dot"></span><div><b id="statusTitle">Loading model</b><small id="statusSubtitle">Checking FBX, rig and animation</small></div></div>
       <div class="metrics"><div><strong id="meshCount">0</strong><span>Meshes</span></div><div><strong id="boneCount">0</strong><span>Bones</span></div><div><strong id="textureCount">0</strong><span>Textures</span></div><div><strong id="clipCount">0</strong><span>Clips</span></div></div>
       <div class="setting-list">
-        <button id="weaponToggle" class="setting" type="button"><span><b>Weapon</b><small>Cycle local CC0 weapon props</small></span><em id="weaponLabel">Pistol</em></button>
+        <button id="weaponToggle" class="setting" type="button"><span><b>Weapon</b><small>Cycle locally hosted CC0 weapon props</small></span><em id="weaponLabel">Pistol</em></button>
         <button id="skeletonToggle" class="setting" type="button"><span><b>Skeleton</b><small>Inspect Michael's mapped rig</small></span><em>Off</em></button>
         <button id="impactTest" class="setting" type="button"><span><b>Balance reaction</b><small>Test procedural hit recovery</small></span><em>Test</em></button>
         <button id="cameraReset" class="setting" type="button"><span><b>Reset camera</b><small>Return behind Michael</small></span><em>Reset</em></button>
         <button id="qualityToggle" class="setting" type="button"><span><b>Performance</b><small>Optimized for mobile Safari</small></span><em id="qualityLabel">Balanced</em></button>
       </div>
       <div class="diagnostic-card"><div class="diagnostic-title"><b>Animation bridge</b><span id="animationBadge">Waiting</span></div><p id="animationInfo">The Meshy walking clip is remapped by normalized bone name. Aim, recoil, breathing and balance are layered procedurally.</p></div>
-      <div class="diagnostic-card weapon-card"><div class="diagnostic-title"><b>Weapon socket</b><span id="weaponBadge">Waiting</span></div><p id="weaponInfo">A right-hand weapon socket is created after Michael loads.</p></div>
+      <div class="diagnostic-card weapon-card"><div class="diagnostic-title"><b>Weapon socket</b><span id="weaponBadge">Waiting</span></div><p id="weaponInfo">A right-hand weapon socket is created after Michael loads. Local GLBs are preferred.</p></div>
       <div class="diagnostic-card subtle"><div class="diagnostic-title"><b>Surface check</b><span id="textureBadge">Waiting</span></div><p id="textureInfo">Materials and embedded texture maps are inspected after load.</p></div>
     </div>
   </aside>
 
   <div id="toast" class="toast" role="alert"></div>
 </main>
-<script type="module" src="./src/main.js?v=5"></script>
+<script type="module" src="./src/main.js?v=6"></script>
 </body>
 </html>
