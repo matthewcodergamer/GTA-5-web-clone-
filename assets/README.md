@@ -1,19 +1,19 @@
 # Asset Notes
 
-## michael.fbx
+## `michael.fbx`
 
 User-supplied binary FBX 7.4 character.
 
 Verified structure:
 
-- one mesh (`char1`)
-- 24 limb bones including `Hips`, legs, feet, spine, shoulders, arms, hands, neck and head
+- one skinned mesh (`char1`)
+- 24 limb bones including hips, legs, feet, spine, shoulders, arms, hands, neck and head
 - UV layer present
 - no embedded `Material`, `Texture` or `Video` FBX nodes
 
-That means the geometry is texture-ready, but the actual texture image is not contained in this upload.
+The geometry is texture-ready, but the actual texture image is not contained in this upload.
 
-## michael_walk.fbx
+## `michael_walk.fbx`
 
 User-supplied Meshy walking animation.
 
@@ -23,12 +23,18 @@ Verified:
 - animation duration ~1.0333 seconds
 - custom frame rate 60 FPS
 
-The runtime maps tracks by normalized bone name and removes only horizontal hip/root translation.
+The runtime maps tracks by normalized bone name and removes only horizontal hip/root travel so the character controller owns world movement.
 
-## Hosted asset bundle
+## Local source package vs GitHub host
 
-For this GitHub-hosted build the two FBX files are also mirrored as gzip + base64 text chunks in `assets/chunks/`. The runtime first tries normal `.fbx` files and falls back to those chunks when the direct binaries are not present. This is only a transport workaround; after decoding, Three.js receives the original FBX bytes.
+The complete source package contains both normal FBX binaries. The connected GitHub text-write interface used during development cannot directly attach local binary FBX bytes, so a GitHub-hosted copy may initially lack those files. When that happens the runtime starts a safe preview rig and exposes an in-browser FBX picker under Diagnostics.
 
-## Future texture placement
+The old base64-chunk transport experiment is not required for the current GitHub build and should not be treated as the normal shipping path.
 
-When a legal diffuse/albedo texture is available, add it here and wire it in `src/main.js`. Do not source or redistribute ripped GTA V textures.
+## Texture placement
+
+When a legal diffuse/albedo texture is available, place it in this asset folder and wire it to Michael's material in `src/main.js` or the v2 runtime. Do not source or redistribute ripped GTA V textures.
+
+## Weapons
+
+See `WEAPONS.md`. Weapon source assets are CC0 candidates; built-in procedural meshes remain available as an offline/CORS-safe fallback.
