@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,maximum-scale=1" />
+  <meta name="theme-color" content="#dfe5df" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Project V — Playable Character Foundation</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <main id="app" aria-label="Project V game prototype">
+    <canvas id="game"></canvas>
+
+    <div id="loading" class="loading" role="status" aria-live="polite">
+      <div class="loading-card">
+        <div class="mark">V</div>
+        <div class="loading-copy">
+          <strong>Preparing Michael</strong>
+          <span id="loadingText">Starting renderer…</span>
+        </div>
+        <div class="progress"><i id="progressBar"></i></div>
+      </div>
+    </div>
+
+    <header class="hud-top">
+      <button id="brand" class="brand glass" type="button" aria-label="Open diagnostics">
+        <span class="brand-mark">V</span>
+        <span class="brand-copy"><b>Project V</b><small id="stateLabel">Loading Michael</small></span>
+      </button>
+      <div class="hud-actions">
+        <div id="fpsPill" class="fps-pill glass"><span id="fpsValue">--</span><small>FPS</small></div>
+        <button id="menuButton" class="icon-button glass" type="button" aria-label="Open diagnostics">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="crosshair" class="crosshair" aria-hidden="true"><i></i><i></i></div>
+
+    <section id="controls" class="controls" aria-label="Touch controls">
+      <div id="joystick" class="joystick" aria-label="Movement joystick">
+        <div class="joystick-ring"></div>
+        <div id="joystickKnob" class="joystick-knob"></div>
+      </div>
+      <div class="action-cluster">
+        <button id="runButton" class="action secondary" type="button" aria-label="Hold to run">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 4.2a2.05 2.05 0 1 0 0 4.1 2.05 2.05 0 0 0 0-4.1ZM10.5 8.3 8.1 11l-2.6.7a1 1 0 0 0 .5 1.9l3.1-.8 1.3-1.4 1.1 2.1-2.2 2.1-1.5 3.1a1 1 0 1 0 1.8.9l1.4-2.8 2.1-1.7 1 1.8 3.4 1.1a1 1 0 1 0 .6-1.9l-2.7-.9-2.1-4 1-1 2.2 1.4a1 1 0 0 0 1.1-1.7l-2.9-1.9a1.9 1.9 0 0 0-2.3.2l-1.9 2Z"/></svg>
+        </button>
+        <button id="jumpButton" class="action primary" type="button" aria-label="Jump">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4 5.6 6.1-1.5 1.4-3.1-3.4V20h-2V8.1l-3.1 3.4-1.5-1.4L12 4Z"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <aside id="sheet" class="sheet" aria-hidden="true">
+      <div class="sheet-scrim" data-close-sheet></div>
+      <div class="sheet-panel" role="dialog" aria-modal="true" aria-label="Project diagnostics">
+        <div class="grabber"></div>
+        <div class="sheet-heading">
+          <div><small>CHARACTER FOUNDATION</small><h2>Michael</h2></div>
+          <button class="close-button" data-close-sheet type="button" aria-label="Close">×</button>
+        </div>
+
+        <div class="status-row">
+          <span id="modelStatus" class="status-dot"></span>
+          <div><b id="statusTitle">Loading model</b><small id="statusSubtitle">Checking FBX, skeleton and animation</small></div>
+        </div>
+
+        <div class="metrics">
+          <div><strong id="meshCount">0</strong><span>Meshes</span></div>
+          <div><strong id="boneCount">0</strong><span>Bones</span></div>
+          <div><strong id="textureCount">0</strong><span>Textures</span></div>
+          <div><strong id="clipCount">0</strong><span>Clips</span></div>
+        </div>
+
+        <div class="setting-list">
+          <button id="skeletonToggle" class="setting" type="button"><span><b>Skeleton</b><small>Inspect the mapped FBX rig</small></span><em>Off</em></button>
+          <button id="cameraReset" class="setting" type="button"><span><b>Reset camera</b><small>Return behind Michael</small></span><svg viewBox="0 0 24 24"><path d="M19 7v5h-5M5.6 9A7 7 0 1 1 5 15"/></svg></button>
+          <button id="qualityToggle" class="setting" type="button"><span><b>Performance</b><small>Optimized for iPhone Safari</small></span><em id="qualityLabel">Balanced</em></button>
+        </div>
+
+        <div class="diagnostic-card">
+          <div class="diagnostic-title"><b>Animation bridge</b><span id="animationBadge">Waiting</span></div>
+          <p id="animationInfo">The walking FBX will be mapped onto Michael by matching bone names. Horizontal root motion is removed so Three.js controls movement.</p>
+        </div>
+
+        <div class="diagnostic-card subtle">
+          <div class="diagnostic-title"><b>Surface check</b><span id="textureBadge">Waiting</span></div>
+          <p id="textureInfo">UVs, materials and embedded texture maps are inspected after the character loads.</p>
+        </div>
+      </div>
+    </aside>
+
+    <div id="toast" class="toast" role="alert"></div>
+  </main>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
