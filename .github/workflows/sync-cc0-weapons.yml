@@ -19,14 +19,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download CC0 GLB weapons
+      - name: Download audited CC0 GLB weapons
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p assets/weapons
-          curl --fail --location --retry 3 --connect-timeout 20 'https://static.poly.pizza/f5a88c73-af97-49ca-8650-4bde579d2f80.glb' -o assets/weapons/pistol.glb
-          curl --fail --location --retry 3 --connect-timeout 20 'https://static.poly.pizza/100fd5db-d5e8-4db7-8ad3-9a96cc217e56.glb' -o assets/weapons/smg.glb
-          curl --fail --location --retry 3 --connect-timeout 20 'https://static.poly.pizza/9a6ee0ee-068b-4774-8b0f-679c3cef0b6e.glb' -o assets/weapons/shotgun.glb
+          BASE='https://raw.githubusercontent.com/petroulacl/fps-asset-kit/main/weapons/flat_guns_west/Flat%20Guns%20West/GLB'
+          curl --fail --location --retry 3 --connect-timeout 20 "$BASE/Pistol_Full_West.glb" -o assets/weapons/pistol.glb
+          curl --fail --location --retry 3 --connect-timeout 20 "$BASE/SMG_Compact_West.glb" -o assets/weapons/smg.glb
+          curl --fail --location --retry 3 --connect-timeout 20 "$BASE/Shotgun_Pump_West.glb" -o assets/weapons/shotgun.glb
           test "$(wc -c < assets/weapons/pistol.glb)" -gt 1000
           test "$(wc -c < assets/weapons/smg.glb)" -gt 1000
           test "$(wc -c < assets/weapons/shotgun.glb)" -gt 1000
@@ -40,6 +41,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'Weapon assets already current.'
           else
-            git commit -m 'Host CC0 weapon GLB assets locally'
+            git commit -m 'Host audited CC0 weapon GLB assets locally'
             git push
           fi
