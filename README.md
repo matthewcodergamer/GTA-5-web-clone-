@@ -1,128 +1,135 @@
 # Project V — Three.js Open-World Foundation
 
-A mobile-first third-person game foundation built around the supplied Michael FBX rig and the supplied Meshy 60 FPS walking animation.
+A mobile-first third-person web game foundation built for the supplied Michael FBX rig and Meshy walking animation. The immediate target is iPhone Safari / GitHub Pages, so the project stays in Three.js rather than moving to Unity before the browser gameplay stack is proven.
 
-This is **Phase 1**, not a finished GTA V recreation. The goal is to get the character, camera, animation bridge, world movement, jumping, lighting and diagnostics solid before adding weapons, NPC AI, vehicles and active-ragdoll behavior.
+This is an original technical prototype inspired by the *feel and systems* of modern open-world third-person games. It does not redistribute Rockstar code, maps, weapon assets, or ripped GTA V textures.
 
-## Supplied assets
+## Current playable foundation
 
-The complete source package prepared with this build contains:
+- Three.js r185.1 browser runtime.
+- FBX character loading with automatic height normalization and ground placement.
+- Bone-name bridge for the supplied Meshy 60 FPS walking FBX.
+- Horizontal root-motion cleanup so the controller owns world movement.
+- Procedural idle, jump takeoff, airborne pose and landing.
+- Walk / run speed states with smooth action crossfades.
+- Touch joystick, run, jump, aim and fire controls.
+- Keyboard controls: `WASD`, `Shift`, `Space`, `Q` aim, `F` fire, `R` reload.
+- Smooth third-person orbit/spring camera.
+- Lightweight city-block test world and collisions.
+- ACES filmic tone mapping, warm sun, cool sky fill, fog and soft nearby shadows.
+- iPhone-oriented DPR cap plus Balanced/Fast performance toggle.
+- Character mesh, bone, UV, texture and animation diagnostics.
+- Skeleton inspection with **no invalid `SkeletonHelper.update()` call**.
 
-- `assets/michael.fbx` — supplied character FBX.
-- `assets/michael_walk.fbx` — supplied Meshy walking animation FBX.
+## Gunplay foundation
 
-The connected GitHub write interface can create/update repository text files but cannot attach local binary FBX bytes directly. If those two `.fbx` files are not visible in the repository's `assets/` folder, copy them from the complete source package using the exact names above. The runtime also contains a safe procedural-walk fallback.
+The game now has a reusable weapon socket on Michael's detected right-hand bone.
 
-### What was verified from the supplied FBX files
+Current weapon states:
 
-The character FBX is a binary FBX 7.4 file with:
+- pistol
+- SMG
+- sawed-off shotgun
+- aim toggle and crosshair
+- ammo and reserve HUD
+- fire-rate limits per weapon
+- reload state
+- camera recoil
+- weapon recoil
+- muzzle flash light
+- raycast bullet impacts
+- touch vibration when supported
+- procedural fallback gun if a remote model cannot load
 
-- 1 skinned mesh
-- 24 named limb bones
-- UV coordinates
-- about 15,275 source vertices
-- about 27,854 triangles
-- no embedded material/texture image nodes
+The live weapon models are lightweight CC0 Quaternius assets. See [`docs/ASSET_SOURCES.md`](./docs/ASSET_SOURCES.md) for source and license details.
 
-The walking FBX uses the same named rig and contains a ~1.033 second walk clip authored at 60 FPS.
+## Euphoria-style direction
 
-Because the supplied character FBX contains UVs but **does not contain the actual texture image**, this build uses a neutral fallback surface. Add a legally obtained diffuse/albedo texture later without changing the controller or animation architecture.
+The goal is not to fake Euphoria by playing one giant canned animation. Project V separates **intent animation** from **runtime physical response**.
 
-## What works now
+Current experiment:
 
-- Modern Three.js r185.1 import-map setup.
-- FBX character loading with automatic scale and ground placement.
-- Bone-name mapping from the supplied walking FBX to Michael.
-- Horizontal root-motion cleanup so world movement is controlled by the game controller instead of being applied twice.
-- Procedural idle with restrained breathing / micro-movement.
-- Procedural jump takeoff, airborne pose and landing clips generated directly against Michael's own bones.
-- Imported 60 FPS walking animation, with a procedural fallback if retargeting fails.
-- Hold-to-run playback/speed state.
-- Touch joystick, jump and run controls.
-- Keyboard controls (`WASD`, arrows, `Shift`, `Space`).
-- Smooth third-person spring camera and touch orbit.
-- Small optimized city-block test environment and collision.
-- ACES filmic tone mapping, sun + sky fill, fog and soft shadows.
-- iPhone-oriented DPR cap and a one-tap fast mode.
-- Rig/material/UV/animation diagnostics.
-- Skeleton display that **does not call the invalid `SkeletonHelper.update()` method**.
-- Runtime error guards so failures surface cleanly instead of flooding the UI.
+`authored locomotion -> directional torso impulse -> balance offset -> recovery`
 
-## Controls
+Planned progression:
 
-### iPhone / touch
+`hit direction + hit strength + current velocity -> spine/shoulder response -> balance loss -> recovery step / partial ragdoll -> blend back to locomotion`
 
-- Left joystick: move
-- Hold runner button: run
-- Arrow button: jump
-- Drag the world: rotate camera
-- Tap the Project V badge / `…`: diagnostics
+The diagnostics sheet includes a **Balance impulse** test so this runtime layer can be tuned independently from the animation clips.
 
-### Desktop
+## Supplied FBX files
 
-- `WASD` / arrow keys: move
-- `Shift`: run
-- `Space`: jump
-- Mouse / pointer drag: camera
+Expected hosted paths:
 
-## Why Three.js first, not Unity
+- `assets/michael.fbx`
+- `assets/michael_walk.fbx`
 
-The immediate target is an iPhone-hosted web game. Three.js keeps the runtime small, gives direct control over FBX/glTF, bones, procedural animation, touch input and WebGL/WebGPU evolution, and deploys directly on GitHub Pages. Unity WebGL can be reconsidered later if a feature genuinely needs its tooling or middleware.
+The supplied character was inspected as a binary FBX 7.4 file with a skinned humanoid rig, UV coordinates and roughly 27.8k triangles. The supplied walk uses the same named rig and is roughly one second at 60 FPS.
 
-## Rendering direction
+### Texture status
 
-The visual target is inspired by the *principles* visible in GTA V's rendering pipeline, not by copying Rockstar assets or code. Technical analyses of GTA V show heavy use of HDR/deferred rendering, cascaded shadows, SSAO, reflections, fog/atmosphere, tone mapping and gradual exposure adaptation. An iPhone web build cannot reproduce that entire desktop/console pipeline cheaply, so this foundation uses the highest-value low-cost equivalents first:
+The supplied character FBX has UV coordinates but does **not** contain an embedded albedo/diffuse image. The runtime preserves the usable FBX material information and reports this in diagnostics. A legally obtained character texture can be added later without changing the controller, skeleton mapping or weapon system.
 
-1. good albedo/materials
-2. one strong sun light
-3. sky/ground fill
-4. soft shadows near the player
-5. fog to control distant detail
-6. ACES tone mapping
-7. aggressive LOD / draw-call control later
+### If the binary FBX is not yet in GitHub
 
-See `docs/RESEARCH.md` for the research notes and legal gun/animation asset candidates.
+The connected GitHub text-write interface cannot directly place this chat's local binary attachment into the repository. To keep the build usable instead of failing with a blank screen, Project V now has an in-app fallback:
 
-## Weapon plan
+1. Open the game.
+2. Open **Diagnostics** when prompted.
+3. Choose **Import Michael FBX** and select the supplied character file.
+4. The browser caches the binary privately in IndexedDB on that device.
+5. Optionally import the Meshy walking FBX the same way.
 
-Do **not** bundle ripped GTA V weapons or textures. For the first legal prototype, use a CC0 weapon pack or your own model, then attach it to a `RightHand` weapon socket and layer upper-body aiming/recoil over locomotion.
+If the files are later uploaded to the two expected `assets/` paths, the runtime automatically prefers the hosted copies and no import step is needed.
 
-Recommended first states:
+Verified SHA-256 values are stored in [`assets/checksums.txt`](./assets/checksums.txt).
 
-- pistol draw
-- pistol aim idle
-- single-shot recoil
-- reload
-- armed walk/run
-- rifle aim/fire
+## Mobile controls
 
-The game should keep the projectile, muzzle flash, sound, recoil impulse and hit reaction procedural, while animation supplies the character's intent and body pose.
+- Left stick — move
+- Run — hold for faster locomotion
+- Jump — jump
+- Aim — toggle aiming / crosshair
+- Fire — shoot current weapon
+- Tap ammo HUD — reload
+- Drag the right side of the world — orbit camera
+- Project V badge / `…` — diagnostics and weapon cycling
 
-## Euphoria-like direction
+## Rendering strategy
 
-Euphoria is not simply a library of canned hit clips. The direction for this project is a hybrid system:
+A browser on an iPhone should not reproduce GTA V's full PC/console frame graph. The high-value order for this project is:
 
-- authored or generated locomotion/action clips
-- procedural spine/shoulder offsets
-- impact-direction impulses
-- balance loss
-- foot recovery
-- partial ragdoll
-- animation-to-physics blending
-- recovery back to locomotion
+1. correct materials and textures
+2. strong sun/sky lighting
+3. nearby shadows
+4. fog and atmosphere
+5. stable character animation
+6. aggressive LOD and streaming
+7. carefully profiled post-processing only when the frame budget allows it
 
-That is a later phase after the base character controller is stable.
+Research notes are in [`docs/RESEARCH.md`](./docs/RESEARCH.md).
 
-## GitHub Pages
+## Architecture
 
-This project is static and has `index.html` at the repository root. Enable GitHub Pages from the default branch root after the two supplied FBX files are present in `assets/`.
+```text
+Player input
+  -> movement controller
+  -> locomotion AnimationMixer
+  -> procedural upper-body aim/recoil layer
+  -> weapon socket / raycast gunplay
+  -> physical balance-response layer
+  -> camera response
+  -> renderer
+```
+
+This lets future Meshy clips replace procedural animation pieces without rewriting movement, shooting, physics or the UI.
 
 ## Next build phase
 
-1. Add a legal textured Michael-compatible character surface or a properly textured replacement export.
-2. Add weapon socket calibration and a CC0 pistol model.
-3. Add upper-body aim/recoil layering while lower-body locomotion keeps running.
-4. Add a proper capsule controller with slopes/stairs.
-5. Add NPCs and navigation.
-6. Add active hit-reaction / partial-ragdoll experiments.
-7. Convert final shipping assets to GLB + compressed textures once the animation library is settled.
+1. Put the supplied binary FBX files at the expected GitHub asset paths, or continue using the new IndexedDB importer while developing.
+2. Calibrate the right-hand socket against the real Michael mesh and each gun.
+3. Import the remaining Meshy pistol/reload/combat clips and layer them over locomotion.
+4. Add a capsule controller with slopes, stairs and step-up handling.
+5. Add NPC navigation and civilian state machines.
+6. Add per-limb hit impulses, stumble selection and partial ragdoll recovery.
+7. Convert final shipping character/animation assets to GLB and compressed textures after the animation library stabilizes.
