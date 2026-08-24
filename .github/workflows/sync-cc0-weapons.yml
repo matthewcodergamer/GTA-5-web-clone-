@@ -1,0 +1,45 @@
+name: Sync CC0 weapon assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-cc0-weapons.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download CC0 GLB weapons
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/weapons
+          curl --fail --location --retry 3 --connect-timeout 20 'https://static.poly.pizza/f5a88c73-af97-49ca-8650-4bde579d2f80.glb' -o assets/weapons/pistol.glb
+          curl --fail --location --retry 3 --connect-timeout 20 'https://static.poly.pizza/100fd5db-d5e8-4db7-8ad3-9a96cc217e56.glb' -o assets/weapons/smg.glb
+          curl --fail --location --retry 3 --connect-timeout 20 'https://static.poly.pizza/9a6ee0ee-068b-4774-8b0f-679c3cef0b6e.glb' -o assets/weapons/shotgun.glb
+          test "$(wc -c < assets/weapons/pistol.glb)" -gt 1000
+          test "$(wc -c < assets/weapons/smg.glb)" -gt 1000
+          test "$(wc -c < assets/weapons/shotgun.glb)" -gt 1000
+
+      - name: Commit local weapon assets
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/weapons
+          if git diff --cached --quiet; then
+            echo 'Weapon assets already current.'
+          else
+            git commit -m 'Host CC0 weapon GLB assets locally'
+            git push
+          fi
