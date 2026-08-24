@@ -28,7 +28,7 @@ jobs:
           test -f styles.css
           test -f src/main.js
           grep -q 'three@0.185.1' index.html
-          grep -q './src/main.js?v=5' index.html
+          grep -q './src/main.js?v=6' index.html
           grep -q 'id="joystick"' index.html
           grep -q 'id="aimButton"' index.html
           grep -q 'id="fireButton"' index.html
@@ -51,31 +51,28 @@ jobs:
             exit 1
           fi
 
-      - name: Verify hosted FBX bundles when present
+      - name: Verify locally hosted character and weapon assets
         shell: bash
         run: |
           set -euo pipefail
+          test -f assets/michael.fbx
+          test -f assets/michael_walk.fbx
+          test -f assets/weapons/pistol.glb
+          test -f assets/weapons/smg.glb
+          test -f assets/weapons/shotgun.glb
+          test "$(wc -c < assets/michael.fbx)" -gt 1000000
+          test "$(wc -c < assets/michael_walk.fbx)" -gt 1000000
+          test "$(wc -c < assets/weapons/pistol.glb)" -gt 1000
+          test "$(wc -c < assets/weapons/smg.glb)" -gt 1000
+          test "$(wc -c < assets/weapons/shotgun.glb)" -gt 1000
           python - <<'PY'
           from pathlib import Path
-          import base64, gzip, hashlib
-
-          expected = {
-              'michael': 'fbf6e3357535739cbe6a40790c958a95077c59135bdee493010165abad09ac2f',
-              'michael_walk': '0cc55d8d1ddefe972488288868bc8a7d8a00b0ec9b99e3df5f623c0bc5fa02e4',
-          }
-          root = Path('assets/hosted')
-          if not root.exists():
-              print('Hosted FBX chunks not committed yet; runtime importer remains available.')
-              raise SystemExit(0)
-          for name, digest in expected.items():
-              parts = sorted(root.glob(f'{name}.*.b64'))
-              if not parts:
-                  print(f'{name}: no chunks yet; skipping')
-                  continue
-              packed = base64.b64decode(''.join(p.read_text().strip() for p in parts))
-              raw = gzip.decompress(packed)
-              assert raw.startswith(b'Kaydara FBX Binary'), f'{name}: invalid FBX header'
-              got = hashlib.sha256(raw).hexdigest()
-              assert got == digest, f'{name}: checksum mismatch {got}'
-              print(f'{name}: {len(parts)} chunks, {len(raw):,} bytes, checksum OK')
+          for path in [Path('assets/michael.fbx'), Path('assets/michael_walk.fbx')]:
+              data = path.read_bytes()[:32]
+              assert data.startswith(b'Kaydara FBX Binary'), f'{path}: invalid FBX header'
+              print(f'{path}: FBX header OK')
+          for path in [Path('assets/weapons/pistol.glb'), Path('assets/weapons/smg.glb'), Path('assets/weapons/shotgun.glb')]:
+              data = path.read_bytes()[:4]
+              assert data == b'glTF', f'{path}: invalid GLB header'
+              print(f'{path}: GLB header OK')
           PY
