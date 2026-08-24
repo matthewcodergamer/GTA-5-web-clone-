@@ -1,54 +1,35 @@
 # Weapon Asset Sources
 
-Project V does not ship ripped GTA V weapon models. The current weapon interface is designed around small, legal glTF/GLB/FBX assets and has a procedural fallback for every slot.
+Project V does not use ripped GTA V weapon models. The current weapon props are vendored as local CC0 GLB files so the game can load them directly from GitHub Pages.
 
-## Selected prototype set
+## Local runtime files
 
-### Pistol
+- `assets/weapons/pistol.glb` — `Pistol_Full_West.glb`
+- `assets/weapons/smg.glb` — `SMG_Compact_West.glb`
+- `assets/weapons/shotgun.glb` — `Shotgun_Pump_West.glb`
 
-- Model: **Pistol**
-- Author: Quaternius
-- Source: https://poly.pizza/m/J3i9KDQ3kt
-- Format: FBX / GLTF
-- License: Public Domain (CC0)
-- Poly Pizza reports 968 triangles.
+## Source and license
 
-Why selected: small enough for mobile, readable third-person silhouette, permissive license and simple socket calibration.
+These three files come from the **FPS Asset Kit** repository by `petroulacl`, which curates the Flat Guns weapon set as CC0/public-domain assets. The weapon pack is provided in web-friendly GLB as well as other formats.
 
-### Compact SMG
+Source repository:
 
-- Model: **Submachine Gun**
-- Author: Quaternius
-- Source: https://poly.pizza/m/7ehatxr7FY
-- Format: FBX / GLTF
-- License: Public Domain (CC0)
+`https://github.com/petroulacl/fps-asset-kit`
 
-Why selected: same visual family as the pistol and appropriate for a lightweight automatic weapon slot.
+Source paths:
 
-### Sawed-Off Shotgun
+- `weapons/flat_guns_west/Flat Guns West/GLB/Pistol_Full_West.glb`
+- `weapons/flat_guns_west/Flat Guns West/GLB/SMG_Compact_West.glb`
+- `weapons/flat_guns_west/Flat Guns West/GLB/Shotgun_Pump_West.glb`
 
-- Model: **Shotgun Sawed Off** from the Ultimate Guns Pack
-- Author: Quaternius
-- Pack: https://poly.pizza/bundle/Ultimate-Guns-Pack-cpgUfI4t2F
-- Format: FBX / GLB
-- License: Public Domain (CC0)
+License: **CC0 / public domain**.
 
-Why selected: short third-person silhouette, distinct handling from pistol/SMG, and the pack is explicitly published for personal and commercial use under CC0.
+## Why this set
 
-## Runtime policy
+The three models are compact enough for an iPhone-oriented Three.js prototype, have clear third-person silhouettes, need no humanoid rig, and are easy to normalize and attach to Michael's right-hand socket.
 
-The runtime has three calibrated slots: `pistol`, `smg`, and `shotgun`.
+The runtime loads the local copies first. If a GLB is missing or malformed, Project V still creates a lightweight procedural weapon so gunplay never becomes a blank-screen dependency.
 
-Each slot:
+## Rigging model
 
-1. creates a lightweight built-in weapon immediately;
-2. mounts it to Michael's right-hand socket;
-3. applies procedural aim/recoil independently of the mesh;
-4. may attempt a remote GLB candidate;
-5. keeps the local fallback if the remote request fails.
-
-That means a CDN outage or CORS change cannot make the game unplayable.
-
-## Before production
-
-Download and vendor the final CC0 GLB files into `assets/weapons/`, then replace remote URLs with local paths. Recheck model orientation/scale, optimize meshes, and compress textures before mobile shipping.
+Weapons remain rigid props. Michael's skeleton owns the hand, forearm, shoulder and torso motion. A `WeaponSocket_RightHand` transform under the detected right-hand bone controls per-weapon scale, rotation and position while procedural aim and recoil are layered onto the character pose.
