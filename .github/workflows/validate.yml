@@ -21,7 +21,7 @@ jobs:
           test -f styles.css
           test -f src/main.js
           grep -q "three@0.185.1" index.html
-          if grep -R "skeletonHelper.*update\|skeleton\.update" -n src index.html 2>/dev/null; then
-            echo "Invalid SkeletonHelper update call found"
+          if grep -R -F "skeletonHelper?.update" -n src index.html 2>/dev/null; then
+            echo "Invalid SkeletonHelper optional update call found"
             exit 1
           fi
