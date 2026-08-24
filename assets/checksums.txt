@@ -1,0 +1,3 @@
+# Supplied FBX SHA-256
+fbf6e3357535739cbe6a40790c958a95077c59135bdee493010165abad09ac2f  michael.fbx
+0cc55d8d1ddefe972488288868bc8a7d8a00b0ec9b99e3df5f623c0bc5fa02e4  michael_walk.fbx
