@@ -1,40 +1,36 @@
-# Asset Notes
+# Project V Asset Notes
 
-## `michael.fbx`
+## Michael runtime FBX
 
-User-supplied binary FBX 7.4 character.
+`assets/michael.fbx` and `assets/michael_walk.fbx` are now hosted directly in this repository, so the GitHub Pages build does not depend on a one-time iPhone file picker to start.
 
-Verified structure:
+For the current runtime both paths point to the supplied Meshy 60 FPS walking export. That export contains the complete skinned Michael mesh as well as the animation data, so it can serve as both the renderable character and the source walking clip.
 
-- one skinned mesh (`char1`)
+Verified from the supplied FBX data:
+
+- binary FBX 7.4
+- one skinned character mesh
 - 24 limb bones including hips, legs, feet, spine, shoulders, arms, hands, neck and head
 - UV layer present
-- no embedded `Material`, `Texture` or `Video` FBX nodes
+- walking animation data present
+- no embedded diffuse/albedo texture image
 
-The geometry is texture-ready, but the actual texture image is not contained in this upload.
+The separate user-supplied character-only FBX remains a valid source asset, but it is not required for this first hosted gameplay build because the walking export already includes the same usable mesh/rig structure.
 
-## `michael_walk.fbx`
+## Texture status
 
-User-supplied Meshy walking animation.
+The character is UV-mapped, but the uploaded Meshy FBX does not contain the actual diffuse/albedo texture image. The game therefore preserves usable material information and otherwise renders a neutral surface until a legal character texture is supplied.
 
-Verified:
-
-- same 24-bone naming layout
-- animation duration ~1.0333 seconds
-- custom frame rate 60 FPS
-
-The runtime maps tracks by normalized bone name and removes only horizontal hip/root travel so the character controller owns world movement.
-
-## Local source package vs GitHub host
-
-The complete source package contains both normal FBX binaries. The connected GitHub text-write interface used during development cannot directly attach local binary FBX bytes, so a GitHub-hosted copy may initially lack those files. When that happens the runtime starts a safe preview rig and exposes an in-browser FBX picker under Diagnostics.
-
-The old base64-chunk transport experiment is not required for the current GitHub build and should not be treated as the normal shipping path.
-
-## Texture placement
-
-When a legal diffuse/albedo texture is available, place it in this asset folder and wire it to Michael's material in `src/main.js` or the v2 runtime. Do not source or redistribute ripped GTA V textures.
+Do not copy or redistribute ripped Rockstar/GTA V textures.
 
 ## Weapons
 
-See `WEAPONS.md`. Weapon source assets are CC0 candidates; built-in procedural meshes remain available as an offline/CORS-safe fallback.
+The runtime now vendors three CC0 GLB props under `assets/weapons/`:
+
+- `pistol.glb`
+- `smg.glb`
+- `shotgun.glb`
+
+They are downloaded by the repository's `sync-cc0-weapons.yml` workflow from the CC0 FPS Asset Kit and are loaded locally before any network fallback is attempted.
+
+See `WEAPONS.md` for provenance and license notes.
