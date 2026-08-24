@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,maximum-scale=1" />
-  <meta name="theme-color" content="#dfe5df" />
+  <meta name="theme-color" content="#dfe6df" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Project V — Three.js Gameplay Foundation</title>
-  <style>html,body,#app{margin:0;width:100%;height:100%;overflow:hidden;background:#0b0d10}body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif}.loading{position:fixed;inset:0;display:grid;place-items:center;color:#fff;background:#0b0d10;z-index:99}</style>
+  <title>Project V</title>
+  <link rel="stylesheet" href="./styles.css?v=5" />
   <script type="importmap">
   {
     "imports": {
@@ -18,46 +18,71 @@
   </script>
 </head>
 <body>
-  <main id="app" aria-label="Project V game prototype">
-    <canvas id="game"></canvas>
-    <div id="loading" class="loading" role="status" aria-live="polite">
-      <div class="loading-card"><div class="mark">V</div><div class="loading-copy"><strong>Preparing Michael</strong><span id="loadingText">Starting renderer…</span></div><div class="progress"><i id="progressBar"></i></div></div>
+<main id="app" aria-label="Project V gameplay prototype">
+  <canvas id="game" aria-label="3D game view"></canvas>
+
+  <div id="loading" class="loading" role="status" aria-live="polite">
+    <div class="loading-card">
+      <div class="loading-symbol">V</div>
+      <div class="loading-copy"><strong>Preparing Michael</strong><span id="loadingText">Starting renderer…</span></div>
+      <div class="progress"><i id="progressBar"></i></div>
     </div>
-    <header class="hud-top">
-      <button id="brand" class="brand glass" type="button" aria-label="Open diagnostics"><span class="brand-mark">V</span><span class="brand-copy"><b>Project V</b><small id="stateLabel">Loading Michael</small></span></button>
-      <div class="hud-actions"><div id="fpsPill" class="fps-pill glass"><span id="fpsValue">--</span><small>FPS</small></div><button id="menuButton" class="icon-button glass" type="button" aria-label="Open diagnostics"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></button></div>
-    </header>
-    <button id="weaponHud" class="weapon-hud glass" type="button" aria-label="Switch weapon"><span class="weapon-glyph"><svg viewBox="0 0 40 24"><path d="M4 9.5h19.5l4-3.5H36v4h-5l-3 2H18l-1.5 8h-6l1.6-8H4z"/></svg></span><span class="weapon-copy"><small>WEAPON</small><b id="weaponName">Pistol</b></span><span id="ammoValue" class="ammo">12 <i>/ 72</i></span></button>
-    <div id="crosshair" class="crosshair" aria-hidden="true"><i></i><i></i></div>
-    <section id="controls" class="controls" aria-label="Touch controls">
-      <div id="joystick" class="joystick"><div class="joystick-ring"></div><div id="joystickKnob" class="joystick-knob"></div></div>
-      <div class="combat-cluster">
-        <button id="weaponButton" class="action utility" type="button" aria-label="Switch weapon"><svg viewBox="0 0 24 24"><path d="M3 9h11l3-3h4v4h-3l-2 2h-5l-1 6H6l1-6H3z"/></svg></button>
-        <button id="aimButton" class="action secondary" type="button" aria-label="Aim"><svg viewBox="0 0 24 24"><path d="M11 2h2v3.1a7 7 0 0 1 5.9 5.9H22v2h-3.1a7 7 0 0 1-5.9 5.9V22h-2v-3.1A7 7 0 0 1 5.1 13H2v-2h3.1A7 7 0 0 1 11 5.1V2Zm1 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/></svg></button>
-        <button id="fireButton" class="action fire" type="button" aria-label="Fire weapon"><span></span></button>
-        <button id="reloadButton" class="action utility" type="button" aria-label="Reload"><svg viewBox="0 0 24 24"><path d="M18.5 8A7 7 0 1 0 19 15h-2.2a5 5 0 1 1-.1-5.2L14 12h7V5l-2.5 3Z"/></svg></button>
-        <button id="runButton" class="action secondary" type="button" aria-label="Hold to run"><svg viewBox="0 0 24 24"><path d="M13.2 4.2a2.05 2.05 0 1 0 0 4.1 2.05 2.05 0 0 0 0-4.1ZM10.5 8.3 8.1 11l-2.6.7a1 1 0 0 0 .5 1.9l3.1-.8 1.3-1.4 1.1 2.1-2.2 2.1-1.5 3.1a1 1 0 1 0 1.8.9l1.4-2.8 2.1-1.7 1 1.8 3.4 1.1a1 1 0 1 0 .6-1.9l-2.7-.9-2.1-4 1-1 2.2 1.4a1 1 0 0 0 1.1-1.7l-2.9-1.9a1.9 1.9 0 0 0-2.3.2l-1.9 2Z"/></svg></button>
-        <button id="jumpButton" class="action primary" type="button" aria-label="Jump"><svg viewBox="0 0 24 24"><path d="m12 4 5.6 6.1-1.5 1.4-3.1-3.4V20h-2V8.1l-3.1 3.4-1.5-1.4L12 4Z"/></svg></button>
-      </div>
-    </section>
-    <aside id="sheet" class="sheet" aria-hidden="true"><div class="sheet-scrim" data-close-sheet></div><div class="sheet-panel" role="dialog" aria-modal="true" aria-label="Project diagnostics"><div class="grabber"></div>
-      <div class="sheet-heading"><div><small>GAMEPLAY FOUNDATION</small><h2>Michael + weapons</h2></div><button class="close-button" data-close-sheet type="button" aria-label="Close">×</button></div>
-      <div class="status-row"><span id="modelStatus" class="status-dot"></span><div><b id="statusTitle">Loading model</b><small id="statusSubtitle">Checking FBX, skeleton and animation</small></div></div>
+  </div>
+
+  <header class="hud-top">
+    <button id="brand" class="brand glass" type="button" aria-label="Open game diagnostics">
+      <span class="brand-mark">V</span><span><b>Project V</b><small id="stateLabel">Loading</small></span>
+    </button>
+    <div class="hud-right">
+      <div class="fps-pill glass"><b id="fpsValue">--</b><small>FPS</small></div>
+      <button id="menuButton" class="round-button glass" type="button" aria-label="Open game diagnostics">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <button id="weaponPill" class="weapon-pill glass" type="button" aria-label="Reload weapon">
+    <span class="weapon-icon"><svg viewBox="0 0 42 24"><path d="M3 9.3h20.5l4-3.6H38v4.1h-6l-3.4 2.5H18.2l-1.7 8H10l1.8-8H3z"/></svg></span>
+    <span class="weapon-meta"><small>WEAPON</small><b id="weaponHudName">Pistol</b></span>
+    <span class="ammo"><b id="ammoValue">12</b><small>/ 72</small></span>
+  </button>
+
+  <div id="crosshair" class="crosshair" aria-hidden="true"><i></i><i></i></div>
+
+  <section class="touch-controls" aria-label="Touch controls">
+    <div id="joystick" class="joystick" aria-label="Movement joystick"><div class="joystick-ring"></div><div id="joystickKnob" class="joystick-knob"></div></div>
+    <div class="combat-cluster">
+      <button id="weaponButton" class="action utility" type="button" aria-label="Switch weapon"><svg viewBox="0 0 24 24"><path d="M3 9h11l3-3h4v4h-3l-2 2h-5l-1 6H6l1-6H3z"/></svg></button>
+      <button id="aimButton" class="action secondary" type="button" aria-label="Aim"><svg viewBox="0 0 24 24"><path d="M11 2h2v3.1a7 7 0 0 1 5.9 5.9H22v2h-3.1a7 7 0 0 1-5.9 5.9V22h-2v-3.1A7 7 0 0 1 5.1 13H2v-2h3.1A7 7 0 0 1 11 5.1V2Zm1 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/></svg></button>
+      <button id="fireButton" class="action fire" type="button" aria-label="Fire"><span></span></button>
+      <button id="reloadButton" class="action utility" type="button" aria-label="Reload"><svg viewBox="0 0 24 24"><path d="M18.5 8A7 7 0 1 0 19 15h-2.2a5 5 0 1 1-.1-5.2L14 12h7V5l-2.5 3Z"/></svg></button>
+      <button id="runButton" class="action secondary" type="button" aria-label="Hold to run"><svg viewBox="0 0 24 24"><path d="M13.2 4.2a2.05 2.05 0 1 0 0 4.1 2.05 2.05 0 0 0 0-4.1ZM10.5 8.3 8.1 11l-2.6.7a1 1 0 0 0 .5 1.9l3.1-.8 1.3-1.4 1.1 2.1-2.2 2.1-1.5 3.1a1 1 0 1 0 1.8.9l1.4-2.8 2.1-1.7 1 1.8 3.4 1.1a1 1 0 1 0 .6-1.9l-2.7-.9-2.1-4 1-1 2.2 1.4a1 1 0 0 0 1.1-1.7l-2.9-1.9a1.9 1.9 0 0 0-2.3.2l-1.9 2Z"/></svg></button>
+      <button id="jumpButton" class="action primary" type="button" aria-label="Jump"><svg viewBox="0 0 24 24"><path d="m12 4 5.6 6.1-1.5 1.4-3.1-3.4V20h-2V8.1l-3.1 3.4-1.5-1.4L12 4Z"/></svg></button>
+    </div>
+  </section>
+
+  <aside id="sheet" class="sheet" aria-hidden="true">
+    <div class="sheet-scrim" data-close-sheet></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-label="Project V diagnostics">
+      <div class="grabber"></div>
+      <div class="sheet-heading"><div><small>GAMEPLAY FOUNDATION</small><h2>Michael</h2></div><button class="close-button" data-close-sheet type="button" aria-label="Close">×</button></div>
+      <div class="status-row"><span id="modelStatus" class="status-dot"></span><div><b id="statusTitle">Loading model</b><small id="statusSubtitle">Checking FBX, rig and animation</small></div></div>
       <div class="metrics"><div><strong id="meshCount">0</strong><span>Meshes</span></div><div><strong id="boneCount">0</strong><span>Bones</span></div><div><strong id="textureCount">0</strong><span>Textures</span></div><div><strong id="clipCount">0</strong><span>Clips</span></div></div>
       <div class="setting-list">
-        <button id="weaponSetting" class="setting" type="button"><span><b>Weapon</b><small id="weaponSource">CC0 model + local fallback</small></span><em id="weaponSettingLabel">Pistol</em></button>
-        <button id="skeletonToggle" class="setting" type="button"><span><b>Skeleton</b><small>Inspect the mapped FBX rig</small></span><em>Off</em></button>
-        <button id="cameraReset" class="setting" type="button"><span><b>Reset camera</b><small>Return behind Michael</small></span><svg viewBox="0 0 24 24"><path d="M19 7v5h-5M5.6 9A7 7 0 1 1 5 15"/></svg></button>
-        <button id="qualityToggle" class="setting" type="button"><span><b>Performance</b><small>Optimized for iPhone Safari</small></span><em id="qualityLabel">Balanced</em></button>
-        <button id="importFbx" class="setting" type="button"><span><b>Import your FBX files</b><small>Choose Michael + walking FBX from Files</small></span><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4M5 13v6h14v-6"/></svg></button><input id="fbxPicker" type="file" accept=".fbx" multiple hidden />
+        <button id="weaponToggle" class="setting" type="button"><span><b>Weapon</b><small>Cycle local CC0 weapon props</small></span><em id="weaponLabel">Pistol</em></button>
+        <button id="skeletonToggle" class="setting" type="button"><span><b>Skeleton</b><small>Inspect Michael's mapped rig</small></span><em>Off</em></button>
+        <button id="impactTest" class="setting" type="button"><span><b>Balance reaction</b><small>Test procedural hit recovery</small></span><em>Test</em></button>
+        <button id="cameraReset" class="setting" type="button"><span><b>Reset camera</b><small>Return behind Michael</small></span><em>Reset</em></button>
+        <button id="qualityToggle" class="setting" type="button"><span><b>Performance</b><small>Optimized for mobile Safari</small></span><em id="qualityLabel">Balanced</em></button>
       </div>
-      <div class="test-grid"><button id="hitLeft" type="button">Hit left</button><button id="hitRight" type="button">Hit right</button><button id="stumble" type="button">Stumble</button></div>
-      <div class="diagnostic-card"><div class="diagnostic-title"><b>Animation bridge</b><span id="animationBadge">Waiting</span></div><p id="animationInfo">The walking FBX is mapped onto Michael by matching bone names. Runtime aiming, recoil, breathing and balance are layered after the authored animation.</p></div>
-      <div class="diagnostic-card"><div class="diagnostic-title"><b>Weapon socket</b><span id="weaponBadge">Waiting</span></div><p id="weaponInfo">A weapon mount is attached to the detected right-hand bone. Pistol, SMG and sawed-off models use lightweight CC0 candidates, with procedural fallbacks if a remote model cannot load.</p></div>
-      <div class="diagnostic-card subtle"><div class="diagnostic-title"><b>Surface check</b><span id="textureBadge">Waiting</span></div><p id="textureInfo">UVs, materials and embedded texture maps are inspected after the character loads.</p></div>
-    </div></aside>
-    <div id="toast" class="toast" role="alert"></div>
-  </main>
-  <script type="module" src="./src/bootstrap-v2.js"></script>
+      <div class="diagnostic-card"><div class="diagnostic-title"><b>Animation bridge</b><span id="animationBadge">Waiting</span></div><p id="animationInfo">The Meshy walking clip is remapped by normalized bone name. Aim, recoil, breathing and balance are layered procedurally.</p></div>
+      <div class="diagnostic-card weapon-card"><div class="diagnostic-title"><b>Weapon socket</b><span id="weaponBadge">Waiting</span></div><p id="weaponInfo">A right-hand weapon socket is created after Michael loads.</p></div>
+      <div class="diagnostic-card subtle"><div class="diagnostic-title"><b>Surface check</b><span id="textureBadge">Waiting</span></div><p id="textureInfo">Materials and embedded texture maps are inspected after load.</p></div>
+    </div>
+  </aside>
+
+  <div id="toast" class="toast" role="alert"></div>
+</main>
+<script type="module" src="./src/main.js?v=5"></script>
 </body>
 </html>
