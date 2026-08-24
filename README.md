@@ -4,10 +4,14 @@ A mobile-first third-person game foundation built around the supplied Michael FB
 
 This is **Phase 1**, not a finished GTA V recreation. The goal is to get the character, camera, animation bridge, world movement, jumping, lighting and diagnostics solid before adding weapons, NPC AI, vehicles and active-ragdoll behavior.
 
-## Included assets
+## Supplied assets
+
+The complete source package prepared with this build contains:
 
 - `assets/michael.fbx` — supplied character FBX.
 - `assets/michael_walk.fbx` — supplied Meshy walking animation FBX.
+
+The connected GitHub write interface can create/update repository text files but cannot attach local binary FBX bytes directly. If those two `.fbx` files are not visible in the repository's `assets/` folder, copy them from the complete source package using the exact names above. The runtime also contains a safe procedural-walk fallback.
 
 ### What was verified from the supplied FBX files
 
@@ -41,7 +45,7 @@ Because the supplied character FBX contains UVs but **does not contain the actua
 - ACES filmic tone mapping, sun + sky fill, fog and soft shadows.
 - iPhone-oriented DPR cap and a one-tap fast mode.
 - Rig/material/UV/animation diagnostics.
-- Skeleton display that **does not call the nonexistent `SkeletonHelper.update()` method**.
+- Skeleton display that **does not call the invalid `SkeletonHelper.update()` method**.
 - Runtime error guards so failures surface cleanly instead of flooding the UI.
 
 ## Controls
@@ -111,7 +115,7 @@ That is a later phase after the base character controller is stable.
 
 ## GitHub Pages
 
-This project is static and has `index.html` at the repository root. Enable GitHub Pages from the default branch root.
+This project is static and has `index.html` at the repository root. Enable GitHub Pages from the default branch root after the two supplied FBX files are present in `assets/`.
 
 ## Next build phase
 
