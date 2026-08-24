@@ -16,21 +16,66 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Check bootstrap syntax
-        run: node --check src/bootstrap-v2.js
-      - name: Check compressed game runtime
+
+      - name: Check Three.js runtime syntax
+        run: node --check src/main.js
+
+      - name: Verify direct game shell
+        shell: bash
         run: |
-          base64 -d src/game-v2.js.gz.b64 | gzip -dc > /tmp/game-v2.js
-          node --check /tmp/game-v2.js
-      - name: Verify required web files and guards
-        run: |
+          set -euo pipefail
           test -f index.html
-          test -f styles-v2.css.gz.b64
-          test -f src/bootstrap-v2.js
-          test -f src/game-v2.js.gz.b64
-          grep -q "three@0.185.1" index.html
-          grep -q "bootstrap-v2.js" index.html
-          if grep -R -E "skeletonHelper\??\.update\(|skeleton\.update\(" -n src index.html 2>/dev/null; then
-            echo "Invalid SkeletonHelper update call found"
+          test -f styles.css
+          test -f src/main.js
+          grep -q 'three@0.185.1' index.html
+          grep -q './src/main.js?v=5' index.html
+          grep -q 'id="joystick"' index.html
+          grep -q 'id="aimButton"' index.html
+          grep -q 'id="fireButton"' index.html
+          grep -q 'id="reloadButton"' index.html
+          grep -q 'id="runButton"' index.html
+          grep -q 'id="jumpButton"' index.html
+          grep -q "let last=performance.now()" src/main.js
+          grep -q 'requestAnimationFrame(frame)' src/main.js
+
+      - name: Guard against known runtime regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -E "skeletonHelper\??\.update\(|skeleton\.update\(" -n src/main.js; then
+            echo 'Invalid SkeletonHelper update call found'
             exit 1
           fi
+          if grep -q "boot();frame(performance.now())" src/main.js; then
+            echo 'Old temporal-dead-zone startup sequence found'
+            exit 1
+          fi
+
+      - name: Verify hosted FBX bundles when present
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import base64, gzip, hashlib
+
+          expected = {
+              'michael': 'fbf6e3357535739cbe6a40790c958a95077c59135bdee493010165abad09ac2f',
+              'michael_walk': '0cc55d8d1ddefe972488288868bc8a7d8a00b0ec9b99e3df5f623c0bc5fa02e4',
+          }
+          root = Path('assets/hosted')
+          if not root.exists():
+              print('Hosted FBX chunks not committed yet; runtime importer remains available.')
+              raise SystemExit(0)
+          for name, digest in expected.items():
+              parts = sorted(root.glob(f'{name}.*.b64'))
+              if not parts:
+                  print(f'{name}: no chunks yet; skipping')
+                  continue
+              packed = base64.b64decode(''.join(p.read_text().strip() for p in parts))
+              raw = gzip.decompress(packed)
+              assert raw.startswith(b'Kaydara FBX Binary'), f'{name}: invalid FBX header'
+              got = hashlib.sha256(raw).hexdigest()
+              assert got == digest, f'{name}: checksum mismatch {got}'
+              print(f'{name}: {len(parts)} chunks, {len(raw):,} bytes, checksum OK')
+          PY
