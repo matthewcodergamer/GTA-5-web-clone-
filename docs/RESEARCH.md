@@ -4,94 +4,70 @@ These notes guide the architecture without copying Rockstar code or redistributi
 
 ## Character motion / Euphoria direction
 
-Rockstar publicly described GTA V combat as evolving from GTA IV, Red Dead Redemption and Max Payne 3, and specifically referenced Euphoria-provided animations in combat. Historical reporting on Rockstar + NaturalMotion describes Euphoria as synthesizing adaptive character motion using simulated motor control, muscles and biomechanics rather than relying only on fixed clips.
+Historical Rockstar/NaturalMotion material describes Euphoria-style character behavior as adaptive motion synthesized from physical control rather than only replaying fixed clips. The useful architectural lesson for this project is **animation for intent + runtime variation for physical response**.
 
 Sources:
 
 - Rockstar Newswire — Worldwide Grand Theft Auto V Previews: https://www.rockstargames.com/newswire/article/o349k552514927/worldwide-grand-theft-auto-v-previews.html
 - Game Developer — GTA IV Using NaturalMotion's Euphoria: https://www.gamedeveloper.com/game-platforms/product-i-grand-theft-auto-iv-i-using-naturalmotion-s-euphoria
 
-### Practical interpretation for this Three.js project
+### Practical interpretation
 
-Use animation for intention, then add runtime physics variation:
-
-- impact direction -> spine/shoulder offset
-- impact strength -> balance loss amount
-- velocity -> stumble step selection
+- impact direction -> spine / shoulder offset
+- impact strength -> balance-loss amount
+- velocity -> stumble severity
 - foot placement -> recovery attempt
-- extreme impulse -> partial ragdoll
-- stabilization -> blend back to authored motion
+- extreme impulse -> partial ragdoll later
+- stabilization -> blend back to authored locomotion
 
-Do not try to encode the entire physical response into one huge animation clip.
+Do not encode the whole reaction into one huge animation clip.
 
 ## GTA V rendering observations
 
-Adrian Courrèges' frame analysis of GTA V identifies a deferred pipeline with HDR buffers, a G-buffer, cascaded shadow maps, SSAO, reflections, fog/atmosphere, bloom, tone mapping and adaptive exposure. The same study emphasizes extensive LOD/streaming and inexpensive distant representations.
+Adrian Courrèges' GTA V frame analysis identifies an HDR deferred pipeline, G-buffer, cascaded shadows, SSAO, reflections, fog/atmosphere, bloom, tone mapping, adaptive exposure and extensive LOD/streaming.
 
 Sources:
 
-- Part 1: https://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study/
-- Part 2: https://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study-part-2/
-- Part 3: https://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study-part-3/
+- https://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study/
+- https://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study-part-2/
+- https://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study-part-3/
 
-### What we copy conceptually on iPhone
+### iPhone/Web interpretation
 
-We do not try to reproduce the full PC/console frame graph. Start with:
+Do not reproduce the full console/PC frame graph. Start with the high-value pieces:
 
 - ACES/HDR-style tone mapping
-- one high-quality directional sun
+- one strong directional sun
 - cheap hemisphere/ambient fill
 - nearby soft shadows
-- fog for atmosphere and distant-detail control
-- glTF/GLB PBR materials later
-- LOD and streamed chunks later
+- atmosphere/fog for distant-detail control
+- glTF PBR materials
+- LOD / streamed chunks later
 
-Avoid expensive full-screen SSAO/SSR/bloom until profiling proves the device budget can handle them.
+Only add full-screen SSAO, SSR or bloom after profiling on the target iPhone.
 
 ## Three.js implementation notes
 
-Current Three.js docs recommend import maps for CDN usage. Three.js `SkeletonUtils` provides `retarget` and `retargetClip` helpers for more complex rig conversions, while this project currently uses direct bone-name mapping because both supplied FBX files use the same bone names.
+The project uses Three.js import maps plus `FBXLoader` and `GLTFLoader`. Because the supplied character and Meshy walk share bone names, the current walk bridge maps tracks directly by normalized bone name rather than doing a generalized humanoid retarget.
 
-`SkeletonHelper` should not be treated like helpers such as `CameraHelper` that expose an `update()` function. The previous `skeletonHelper.update is not a function` error came from calling a method that does not exist on `SkeletonHelper`.
+`SkeletonHelper` is part of the normal scene graph and is **not** called with `skeletonHelper.update()`. The previous repeated console error came from trying to call a method that `SkeletonHelper` does not expose.
 
 Sources:
 
-- Installation: https://threejs.org/manual/en/installation.html
-- SkeletonUtils: https://threejs.org/docs/pages/module-SkeletonUtils.html
-- Three.js r185 CDN: https://cdn.jsdelivr.net/npm/three/
+- Three.js installation: https://threejs.org/manual/en/installation.html
+- Three.js SkeletonHelper: https://threejs.org/docs/#api/en/helpers/SkeletonHelper
+- Three.js SkeletonUtils: https://threejs.org/docs/pages/module-SkeletonUtils.html
 
-## Legal weapon asset candidates
+## Selected legal weapon candidates
 
-Do not use ripped GTA weapon models. These are legal prototype candidates:
+Poly Pizza currently lists the following Quaternius models as Public Domain (CC0) and downloadable in FBX/GLTF or GLB-compatible formats:
 
-### Quaternius Ultimate Guns Pack
+- Pistol: https://poly.pizza/m/J3i9KDQ3kt
+- Submachine Gun: https://poly.pizza/m/7ehatxr7FY
+- Ultimate Guns Pack: https://poly.pizza/bundle/Ultimate-Guns-Pack-cpgUfI4t2F
 
-- 40 weapon models
-- FBX / OBJ / Blend
-- CC0
-- includes pistol, Glock-style, rifles, shotguns, SMGs and sniper-style weapons
-- https://quaternius.com/packs/ultimategun.html
+The Ultimate Guns Pack contains pistol, submachine-gun and sawed-off-shotgun options and is published under CC0. See `assets/WEAPONS.md` for the exact prototype choices.
 
-### Quaternius Animated Guns Pack
+### Production asset rule
 
-- 6 animated weapons
-- pistol, revolver, shotgun, sniper and others
-- FBX / OBJ / Blend
-- CC0
-- https://quaternius.com/packs/animatedguns.html
-
-### Quaternius Universal Animation Library
-
-- 120+ humanoid animations
-- locomotion, combat and gun motions
-- FBX / GLB / Blend
-- CC0
-- useful as a fallback/retarget library when an AI-generated motion is missing
-- https://quaternius.com/packs/universalanimationlibrary.html
-
-### Poly Pizza CC0 pistol examples
-
-- Quaternius pistol, GLTF/FBX, CC0: https://poly.pizza/m/J3i9KDQ3kt
-- Colt 1911 by AdamKokrito, GLTF/FBX, CC0, separate magazine/slide/trigger/hammer: https://poly.pizza/m/zmuVJOUn4p
-
-For a more realistic final visual style, replace low-poly placeholders with a higher-quality legally licensed PBR model, but keep the same weapon-socket interface.
+Do not depend permanently on a third-party CDN. Before shipping, download the selected CC0 models, retain license/source notes, convert/optimize to local GLB, and serve them from `assets/weapons/`.
