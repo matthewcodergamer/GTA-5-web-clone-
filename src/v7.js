@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { createProjectVMinimap } from './minimap.js';
 
-const VERSION = 8;
+const VERSION = 9;
 // PROJECT_V_ENVIRONMENT_V8
+// PROJECT_V_MINIMAP_V9
 const GAME_PALETTES = {
   day: {
     sky_atmosphere: 0xF1FBFB, vegetation_grass: 0x73894E, earth_terrain: 0x625851,
@@ -107,6 +109,7 @@ scene.add(world, root);
 const collisionBoxes = [], shootables = [];
 buildWorld();
 atmosphere = buildAtmosphere();
+const minimap = createProjectVMinimap({ root, worldExtent: 60, toast });
 
 let michael = null, mixer = null, skeleton = null;
 let bones = new Map(), restPose = new Map(), actions = {}, active = null;
@@ -668,14 +671,14 @@ function keyboardLoop(){const keys=window.__projectVKeys||new Set();let x=0,y=0;
 
 function progress(p,text){if(ui.bar)ui.bar.style.width=`${Math.max(4,Math.min(100,p*100))}%`;if(ui.loadingText)ui.loadingText.textContent=text;}
 function toast(msg){if(!ui.toast)return;ui.toast.textContent=msg;ui.toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>ui.toast.classList.remove('show'),1800);}
-function fail(error){console.error('Project V v7 boot failed:',error);ui.dot?.classList.add('error');if(ui.title)ui.title.textContent='Michael needs attention';if(ui.sub)ui.sub.textContent=error?.message||'Unknown asset error';if(ui.state)ui.state.textContent='Asset error';ui.loading?.classList.add('done');openSheet();toast('Project V caught a startup issue.');}
+function fail(error){console.error('Project V v9 boot failed:',error);ui.dot?.classList.add('error');if(ui.title)ui.title.textContent='Michael needs attention';if(ui.sub)ui.sub.textContent=error?.message||'Unknown asset error';if(ui.state)ui.state.textContent='Asset error';ui.loading?.classList.add('done');openSheet();toast('Project V caught a startup issue.');}
 function installGuards(){addEventListener('error',e=>{console.error('Runtime error:',e.error||e.message);if(ready)toast('A runtime issue was caught safely.');});addEventListener('unhandledrejection',e=>{console.error('Unhandled promise rejection:',e.reason);if(ready)toast('A background task failed safely.');});}
 function openSheet(){ui.sheet?.classList.add('open');ui.sheet?.setAttribute('aria-hidden','false');}
 function closeSheet(){ui.sheet?.classList.remove('open');ui.sheet?.setAttribute('aria-hidden','true');}
 
 function frame(now){
   requestAnimationFrame(frame);const dt=Math.min(.04,Math.max(.001,(now-last)/1000));last=now;
-  updateEnvironment(dt,now);updateCharacter(dt);updateCamera(dt);renderer.render(scene,camera);
+  updateEnvironment(dt,now);updateCharacter(dt);updateCamera(dt);minimap.update(dt,now,{gameState,speed,runHeld,aim,ready});renderer.render(scene,camera);
   fpsAcc+=1/dt;fpsFrames++;if(now-fpsAt>650){ui.fps.textContent=Math.round(fpsAcc/fpsFrames);fpsAcc=fpsFrames=0;fpsAt=now;}
 }
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight,false);});
