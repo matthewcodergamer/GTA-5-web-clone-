@@ -1,1 +1,14 @@
-{"version":7,"order":["shoes.webp","hair.webp","hands.webp","face_body.webp","pants.webp","mouth.webp","jacket_shirt.webp"],"notes":"User-supplied Michael texture atlases. Runtime maps existing material groups first, then uses a conservative body-region fallback when the FBX is merged."}
+{
+  "version": 7,
+  "textures": {
+    "shoes": ["shoes.webp.b64"],
+    "hair": ["hair.00.b64", "hair.01.b64", "hair.02.b64", "hair.03.b64", "hair.04.b64"],
+    "hands": ["hands.webp.b64"],
+    "face": ["face_body.00.b64", "face_body.01.b64"],
+    "pants": ["pants.webp.b64"],
+    "mouth": ["mouth.webp.b64"],
+    "jacket": ["jacket_shirt.webp.b64"]
+  },
+  "materialOrder": ["shoes", "hair", "hands", "face", "pants", "mouth", "jacket"],
+  "notes": "User-supplied Michael texture atlases. Project V v7 preserves FBX material groups when available and otherwise rebuilds the merged skinned mesh into conservative body regions while preserving UV, skin index and skin weight attributes."
+}
