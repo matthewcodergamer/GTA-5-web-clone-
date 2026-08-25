@@ -1,0 +1,59 @@
+name: Apply Project V v8 environment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/apply_v8_environment.py'
+      - '.github/workflows/apply-v8-environment.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply v8 environment patch
+        run: python tools/apply_v8_environment.py
+      - name: Validate JavaScript syntax
+        run: |
+          node --check src/v7.js
+          node --check src/main.js
+      - name: Validate expected v8 features
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'PROJECT_V_ENVIRONMENT_V8' src/v7.js
+          grep -q 'GAME_PALETTES' src/v7.js
+          grep -q 'buildAtmosphere' src/v7.js
+          grep -q 'environmentToggle' src/v7.js
+          grep -q 'src/main.js?v=8' index.html
+          grep -q "import './v7.js?v=8'" src/main.js
+          if grep -E "skeletonHelper\??\.update\(|skeleton\.update\(" -n src/v7.js src/main.js; then
+            echo 'Invalid SkeletonHelper update call found'
+            exit 1
+          fi
+      - name: Commit v8 runtime
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/v7.js src/main.js index.html
+          if git diff --cached --quiet; then
+            echo 'Project V v8 environment is already current.'
+          else
+            git commit -m 'Build Chrometry atmosphere and GTA-style cloud system'
+            git push
+          fi
