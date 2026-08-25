@@ -1,0 +1,53 @@
+/* Project V v7 — mobile combat spacing and calmer GTA-style HUD proportions */
+.combat-cluster{
+  right:max(16px,env(safe-area-inset-right));
+  bottom:calc(max(18px,env(safe-area-inset-bottom)) + 2px);
+  width:218px;
+  height:220px;
+}
+.action{box-shadow:0 12px 28px rgba(14,20,16,.15),inset 0 1px 0 rgba(255,255,255,.82)}
+.action.utility{width:46px;height:46px}
+.action.secondary{width:54px;height:54px}
+.action.primary{width:66px;height:66px}
+.action.fire{width:70px;height:70px;right:0;bottom:62px}
+.action.fire span{width:19px;height:19px;box-shadow:0 0 0 7px rgba(17,21,18,.07)}
+#aimButton{right:8px;top:0}
+#reloadButton{right:78px;top:7px}
+#weaponButton{left:3px;top:81px}
+#runButton{left:5px;bottom:7px}
+#jumpButton{left:82px;bottom:0}
+.joystick{left:max(20px,env(safe-area-inset-left));bottom:calc(max(20px,env(safe-area-inset-bottom)) + 5px);width:122px;height:122px}
+.weapon-pill{right:14px;max-width:min(54vw,240px)}
+.crosshair{top:45%}
+
+@media(min-width:780px){
+  .combat-cluster{right:30px;bottom:28px;width:220px;height:220px}
+  .joystick{left:30px;bottom:28px}
+}
+
+@media(orientation:landscape) and (max-height:540px){
+  .hud-top{padding:calc(env(safe-area-inset-top) + 8px) 12px 0}
+  .brand{min-height:44px;padding:6px 11px 6px 6px}.brand-mark{width:32px;height:32px;border-radius:11px}
+  .fps-pill,.round-button{height:40px}.round-button{width:40px}
+  .weapon-pill{top:calc(env(safe-area-inset-top) + 58px);right:max(12px,env(safe-area-inset-right));min-height:48px;padding:5px 9px 5px 6px}
+  .weapon-icon{width:34px;height:34px}.weapon-meta b{font-size:11px}.ammo>b{font-size:16px}
+  .joystick{left:max(14px,env(safe-area-inset-left));bottom:calc(max(12px,env(safe-area-inset-bottom)) + 2px);width:108px;height:108px}
+  .joystick-knob{width:44px;height:44px;margin:-22px}
+  .combat-cluster{right:max(14px,env(safe-area-inset-right));bottom:calc(max(10px,env(safe-area-inset-bottom)) + 2px);width:196px;height:176px;transform:none}
+  .action.utility{width:42px;height:42px}.action.secondary{width:48px;height:48px}.action.primary{width:58px;height:58px}
+  .action.fire{width:62px;height:62px;right:0;bottom:48px}
+  #aimButton{right:7px;top:0}
+  #reloadButton{right:69px;top:5px}
+  #weaponButton{left:2px;top:61px}
+  #runButton{left:4px;bottom:3px}
+  #jumpButton{left:72px;bottom:0}
+  .toast{bottom:calc(155px + env(safe-area-inset-bottom))}
+}
+
+@media(max-width:370px) and (orientation:portrait){
+  .combat-cluster{width:204px;height:208px;right:10px}
+  .action.fire{width:66px;height:66px;bottom:58px}
+  #aimButton{right:6px}.action.secondary{width:50px;height:50px}.action.primary{width:62px;height:62px}
+  #reloadButton{right:72px}#jumpButton{left:76px}#weaponButton{top:76px}
+  .joystick{width:112px;height:112px;left:12px}
+}
