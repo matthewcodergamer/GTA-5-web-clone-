@@ -22,7 +22,7 @@ jobs:
           node --check src/main.js
           node --check src/v7.js
 
-      - name: Verify v7 game shell
+      - name: Verify v8 game shell
         shell: bash
         run: |
           set -euo pipefail
@@ -32,9 +32,9 @@ jobs:
           test -f src/main.js
           test -f src/v7.js
           grep -q 'three@0.185.1' index.html
-          grep -q './src/main.js?v=7' index.html
-          grep -q './styles-v7.css?v=7' index.html
-          grep -q "import './v7.js?v=7'" src/main.js
+          grep -q './src/main.js?v=8' index.html
+          grep -q './styles-v7.css?v=8' index.html
+          grep -q "import './v7.js?v=8'" src/main.js
           grep -q 'id="joystick"' index.html
           grep -q 'id="aimButton"' index.html
           grep -q 'id="fireButton"' index.html
@@ -45,6 +45,11 @@ jobs:
           grep -q 'requestAnimationFrame(frame)' src/v7.js
           grep -q 'rebuildGeometryByBodyRegion' src/v7.js
           grep -q 'WeaponWorldSocket' src/v7.js
+          grep -q 'PROJECT_V_ENVIRONMENT_V8' src/v7.js
+          grep -q 'GAME_PALETTES' src/v7.js
+          grep -q 'buildAtmosphere' src/v7.js
+          grep -q 'updateEnvironment' src/v7.js
+          grep -q 'environmentToggle' src/v7.js
 
       - name: Guard against known runtime regressions
         shell: bash
