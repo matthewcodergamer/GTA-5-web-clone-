@@ -1,0 +1,1 @@
+{"version":7,"order":["shoes.webp","hair.webp","hands.webp","face_body.webp","pants.webp","mouth.webp","jacket_shirt.webp"],"notes":"User-supplied Michael texture atlases. Runtime maps existing material groups first, then uses a conservative body-region fallback when the FBX is merged."}
