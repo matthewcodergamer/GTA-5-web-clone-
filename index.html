@@ -10,7 +10,8 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>Project V</title>
-  <link rel="stylesheet" href="./styles.css?v=6" />
+  <link rel="stylesheet" href="./styles.css?v=7" />
+  <link rel="stylesheet" href="./styles-v7.css?v=7" />
   <script type="importmap">
   {
     "imports": {
@@ -47,7 +48,7 @@
   <button id="weaponPill" class="weapon-pill glass" type="button" aria-label="Reload weapon">
     <span class="weapon-icon"><svg viewBox="0 0 42 24"><path d="M3 9.3h20.5l4-3.6H38v4.1h-6l-3.4 2.5H18.2l-1.7 8H10l1.8-8H3z"/></svg></span>
     <span class="weapon-meta"><small>WEAPON</small><b id="weaponHudName">Pistol</b></span>
-    <span class="ammo"><b id="ammoValue">12</b><small>/ 72</small></span>
+    <span class="ammo"><b id="ammoValue">12</b><small>/ 60</small></span>
   </button>
 
   <div id="crosshair" class="crosshair" aria-hidden="true"><i></i><i></i></div>
@@ -68,24 +69,24 @@
     <div class="sheet-scrim" data-close-sheet></div>
     <div class="sheet-panel" role="dialog" aria-modal="true" aria-label="Project V diagnostics">
       <div class="grabber"></div>
-      <div class="sheet-heading"><div><small>GAMEPLAY FOUNDATION</small><h2>Michael</h2></div><button class="close-button" data-close-sheet type="button" aria-label="Close">×</button></div>
-      <div class="status-row"><span id="modelStatus" class="status-dot"></span><div><b id="statusTitle">Loading model</b><small id="statusSubtitle">Checking FBX, rig and animation</small></div></div>
+      <div class="sheet-heading"><div><small>GAMEPLAY FOUNDATION · V7</small><h2>Michael</h2></div><button class="close-button" data-close-sheet type="button" aria-label="Close">×</button></div>
+      <div class="status-row"><span id="modelStatus" class="status-dot"></span><div><b id="statusTitle">Loading model</b><small id="statusSubtitle">Checking FBX, texture atlases, rig and animation</small></div></div>
       <div class="metrics"><div><strong id="meshCount">0</strong><span>Meshes</span></div><div><strong id="boneCount">0</strong><span>Bones</span></div><div><strong id="textureCount">0</strong><span>Textures</span></div><div><strong id="clipCount">0</strong><span>Clips</span></div></div>
       <div class="setting-list">
         <button id="weaponToggle" class="setting" type="button"><span><b>Weapon</b><small>Cycle locally hosted CC0 weapon props</small></span><em id="weaponLabel">Pistol</em></button>
         <button id="skeletonToggle" class="setting" type="button"><span><b>Skeleton</b><small>Inspect Michael's mapped rig</small></span><em>Off</em></button>
-        <button id="impactTest" class="setting" type="button"><span><b>Balance reaction</b><small>Test procedural hit recovery</small></span><em>Test</em></button>
+        <button id="impactTest" class="setting" type="button"><span><b>Balance reaction</b><small>Test spring-driven hit recovery</small></span><em>Test</em></button>
         <button id="cameraReset" class="setting" type="button"><span><b>Reset camera</b><small>Return behind Michael</small></span><em>Reset</em></button>
         <button id="qualityToggle" class="setting" type="button"><span><b>Performance</b><small>Optimized for mobile Safari</small></span><em id="qualityLabel">Balanced</em></button>
       </div>
-      <div class="diagnostic-card"><div class="diagnostic-title"><b>Animation bridge</b><span id="animationBadge">Waiting</span></div><p id="animationInfo">The Meshy walking clip is remapped by normalized bone name. Aim, recoil, breathing and balance are layered procedurally.</p></div>
-      <div class="diagnostic-card weapon-card"><div class="diagnostic-title"><b>Weapon socket</b><span id="weaponBadge">Waiting</span></div><p id="weaponInfo">A right-hand weapon socket is created after Michael loads. Local GLBs are preferred.</p></div>
-      <div class="diagnostic-card subtle"><div class="diagnostic-title"><b>Surface check</b><span id="textureBadge">Waiting</span></div><p id="textureInfo">Materials and embedded texture maps are inspected after load.</p></div>
+      <div class="diagnostic-card"><div class="diagnostic-title"><b>Animation bridge</b><span id="animationBadge">Waiting</span></div><p id="animationInfo">Walk, run, idle, jump, aim, recoil and balance layers are preparing.</p></div>
+      <div class="diagnostic-card weapon-card"><div class="diagnostic-title"><b>Weapon socket</b><span id="weaponBadge">Waiting</span></div><p id="weaponInfo">Weapons render at world scale and follow Michael's right hand so FBX scaling cannot hide them.</p></div>
+      <div class="diagnostic-card subtle"><div class="diagnostic-title"><b>Surface check</b><span id="textureBadge">Waiting</span></div><p id="textureInfo">Loading the uploaded Michael texture atlases.</p></div>
     </div>
   </aside>
 
   <div id="toast" class="toast" role="alert"></div>
 </main>
-<script type="module" src="./src/main.js?v=6"></script>
+<script type="module" src="./src/main.js?v=7"></script>
 </body>
 </html>
