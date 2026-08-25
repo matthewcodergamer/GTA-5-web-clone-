@@ -1,0 +1,110 @@
+/* Project V v9 radar/minimap — GTA-style visual language, clean-room implementation */
+.project-v-radar{
+  position:absolute;
+  z-index:21;
+  left:max(14px,env(safe-area-inset-left));
+  bottom:calc(max(12px,env(safe-area-inset-bottom)) + 2px);
+  width:218px;
+  height:132px;
+  pointer-events:auto;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+  opacity:.96;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.30));
+  transition:width .2s ease,height .2s ease,opacity .2s ease;
+}
+.project-v-radar.expanded{
+  width:min(42vw,344px);
+  height:min(27vw,224px);
+}
+.project-v-radar-canvas{
+  position:absolute;
+  inset:0 0 7px;
+  width:100%;
+  height:calc(100% - 7px);
+  display:block;
+  background:rgba(17,19,20,.26);
+  border-radius:1px;
+}
+.project-v-radar-distance{
+  position:absolute;
+  left:9px;
+  bottom:13px;
+  z-index:2;
+  color:rgba(239,241,239,.94);
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  text-shadow:0 1px 2px rgba(0,0,0,.9);
+  opacity:0;
+  transition:opacity .15s ease;
+  pointer-events:none;
+}
+.project-v-radar-distance.visible{opacity:1}
+.project-v-radar-bars{
+  position:absolute;
+  z-index:3;
+  left:0;
+  right:0;
+  bottom:0;
+  height:7px;
+  display:grid;
+  grid-template-columns:1.42fr .86fr .68fr;
+  gap:2px;
+  pointer-events:none;
+}
+.project-v-radar-bar{
+  position:relative;
+  overflow:hidden;
+  background:rgba(8,10,10,.82);
+  border-top:1px solid rgba(255,255,255,.20);
+  box-shadow:0 1px 0 rgba(0,0,0,.85);
+}
+.project-v-radar-bar i{
+  display:block;
+  position:absolute;
+  inset:1px;
+  transform-origin:left center;
+  transform:scaleX(1);
+  transition:transform .18s ease;
+}
+.project-v-radar-bar.health i{background:#6ca64f}
+.project-v-radar-bar.armor i{background:#5d9eb5}
+.project-v-radar-bar.special i{background:#d5ba45}
+
+/* The mobile movement control sits above the radar so both remain usable. */
+body.has-project-v-radar .joystick{
+  left:max(16px,env(safe-area-inset-left));
+  bottom:calc(max(12px,env(safe-area-inset-bottom)) + 145px);
+  width:104px;
+  height:104px;
+}
+body.has-project-v-radar .joystick-knob{width:44px;height:44px;margin:-22px}
+
+@media(min-width:780px){
+  .project-v-radar{left:26px;bottom:24px;width:236px;height:143px}
+  .project-v-radar.expanded{width:360px;height:232px}
+  body.has-project-v-radar .joystick{left:28px;bottom:184px;width:110px;height:110px}
+}
+@media(orientation:landscape) and (max-height:540px){
+  .project-v-radar{
+    left:max(12px,env(safe-area-inset-left));
+    bottom:calc(max(8px,env(safe-area-inset-bottom)) + 1px);
+    width:200px;
+    height:119px;
+  }
+  .project-v-radar.expanded{width:min(40vw,318px);height:min(25vw,190px)}
+  body.has-project-v-radar .joystick{
+    left:max(14px,env(safe-area-inset-left));
+    bottom:calc(max(8px,env(safe-area-inset-bottom)) + 130px);
+    width:92px;height:92px;
+  }
+  body.has-project-v-radar .joystick-knob{width:40px;height:40px;margin:-20px}
+}
+@media(max-width:430px) and (orientation:portrait){
+  .project-v-radar{width:min(55vw,218px);height:min(34vw,132px)}
+  .project-v-radar.expanded{width:calc(100vw - 28px);height:54vw}
+  body.has-project-v-radar .joystick{bottom:calc(max(12px,env(safe-area-inset-bottom)) + 148px)}
+}
