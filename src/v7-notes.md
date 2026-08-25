@@ -1,0 +1,1 @@
+Project V v7 focuses on Michael texture atlas mapping, smoother locomotion transitions, weapon visibility, recoil springs, aim/un-aim body posing, muzzle effects, and safer mobile control spacing.
