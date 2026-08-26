@@ -1,0 +1,25 @@
+# User-owned/proprietary game data: never commit these.
+game-src/
+private/
+extracted/
+cache/
+*.rpf
+*.xex
+*.iso
+*.7z
+*.zip
+*.pak
+
+# Generated engine caches/indexes.
+*.projectv-index.json
+*.projectv-cache
+build/
+dist/
+node_modules/
+.DS_Store
+
+# Local Cloudflare configuration/secrets.
+.dev.vars
+.env
+.env.*
+wrangler.toml.local

@@ -1,0 +1,1 @@
+export class ProjectVRuntime{constructor({vfs,formats,world,streamer,renderer,physics,animation}){Object.assign(this,{vfs,formats,world,streamer,renderer,physics,animation});}async tick({playerCellX,playerCellZ,dt}){await this.streamer?.update(playerCellX,playerCellZ);this.physics?.step?.(dt);}}

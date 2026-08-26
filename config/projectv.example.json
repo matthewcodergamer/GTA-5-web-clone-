@@ -1,0 +1,15 @@
+{
+  "game": "gta5-xbox360",
+  "generation": "five-xbox360",
+  "source": {
+    "mode": "local",
+    "baseUrl": null,
+    "manifestUrl": null
+  },
+  "renderer": "three",
+  "streaming": {
+    "loadRadius": 3,
+    "unloadRadius": 5,
+    "maxConcurrentLoads": 4
+  }
+}

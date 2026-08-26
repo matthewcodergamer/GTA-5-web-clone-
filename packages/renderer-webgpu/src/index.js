@@ -1,0 +1,2 @@
+export function webGpuSupport(){return{supported:typeof navigator!=='undefined'&&!!navigator.gpu,adapter:null};}
+export class WebGpuRendererBackend{get name(){return'webgpu';}async initialize(){if(!navigator?.gpu)throw new Error('WebGPU is unavailable');this.adapter=await navigator.gpu.requestAdapter({powerPreference:'high-performance'});if(!this.adapter)throw new Error('No WebGPU adapter');this.device=await this.adapter.requestDevice();return this;}}
